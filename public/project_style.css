@@ -1,0 +1,119 @@
+#page_container {
+  /*width: 80%;*/
+  max-width: 1020px;
+  margin: 0 auto;
+}
+
+.hidden {
+  opacity: 0;
+  transition: opacity 500ms ease-in;
+  -webkit-transition: opacity 500ms ease-in;
+  -moz-transition: opacity 500ms ease-in;
+  z-index: 0 !important;
+}
+
+.visible {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+  -webkit-transition: opacity 500ms ease-in;
+  -moz-transition: opacity 500ms ease-in;
+}
+
+circle {
+  fill: #80B3FF;
+  fill-opacity: .25;
+  stroke: #80B3FF;
+  stroke-width: 1px;
+}
+
+circle.parent:hover {
+  stroke: green;
+  stroke-width: 2px;
+}
+
+.individual circle {
+  fill: yellow;
+  fill-opacity: 1;
+}
+
+.clear {
+  clear: both;
+}
+
+.sub_cand {
+  float: left;
+}
+
+.active circle {
+  stroke: red;
+  stroke-width: 2px;
+}
+
+.pac circle {
+  fill: black;
+  fill-opacity: 1;
+}
+
+.cycle_message span{
+  margin-right: 15px;
+}
+
+#years {
+  margin: 25px 0;
+}
+
+.year {
+  float: left;
+  display: block;
+}
+
+#candidates {
+  margin: 25px 0 0 0;
+}
+
+.candidate {
+  float: left;
+  display: block;
+  margin-right: 50px;
+}
+
+.candidate:hover {
+  cursor: pointer;
+}
+
+.vizTooltip {
+  height: auto;
+  width: auto;
+  z-index: 10;
+  position: absolute;
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.cand_message {
+  width: 250px
+}
+
+.politicianMessage {
+  margin-top: 43px;
+}
+
+.politicianMessage .name {
+  font-size: 24px;
+}
+
+.politicianMessage .party_state {
+  font-weight: bold;
+}
+
+.politicianMessage .democrat {
+  color: blue;
+}
+
+.politicianMessage .republican {
+  color: red;
+}
+
+
+
