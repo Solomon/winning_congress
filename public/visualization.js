@@ -44,12 +44,12 @@ $(document).ready(function(){
 
       addPolitician: function(d){
         var polAttributes = {
-          name: d.politician_name, party: d.party, cid: d.politician_cid,
+          name: d.politician_name, party: d.politician_name.slice(-2,-1),
           district: d.district_run_for, children: [], tooltipLevel: "politician",
           state: d.district_run_for.substring(0,2), displayName: d.politician_name.slice(0, -4),
           pacTotal: function(){
             var that = this;
-            return _.reduce(that.children, function(sum, num){ return num.moneySource == "pac" ? sum + num.value : sum; }, 0);
+            return _.reduce(that.children, function(sum, num){ return num.moneySource == "p" ? sum + num.value : sum; }, 0);
           },
           pacPercentage: function(){
             var pacTotal = this.pacTotal();
@@ -57,11 +57,11 @@ $(document).ready(function(){
           },
           pacContributions: function(){
             var that = this;
-            return _.where(that.children, {moneySource: "pac"});
+            return _.where(that.children, {moneySource: "p"});
           },
           individualContributions: function(){
             var that = this;
-            return _.where(that.children, {moneySource: "individual"});
+            return _.where(that.children, {moneySource: "i"});
           }
         };
         this.cycle(d.cycle).children.push(polAttributes);
@@ -92,7 +92,7 @@ $(document).ready(function(){
       populate: function(results){
         var that = this;
         _.each(results, function(d){
-          if(d.house == "senate"){
+          if(d.house == "s"){
             that.addRecord(d);
           }
         });
@@ -187,7 +187,7 @@ $(document).ready(function(){
       );
     };
 
-    d3.csv("public/pols.csv", function(error, congress){
+    d3.csv("public/smaller_pols.csv", function(error, congress){
       nope = root = contributionData.populate(congress);
       sdata = congress;
 
