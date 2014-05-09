@@ -10,6 +10,7 @@ $(document).ready(function(){
     contributionData = {
       name: 'Contributions',
       tooltipLevel: "contributions",
+      // Add senate & house children here
       children: [],
 
       hasCycle: function(year){
@@ -53,6 +54,14 @@ $(document).ready(function(){
           pacPercentage: function(){
             var pacTotal = this.pacTotal();
             return pacTotal / this.value;
+          },
+          pacContributions: function(){
+            var that = this;
+            return _.where(that.children, {moneySource: "pac"});
+          },
+          individualContributions: function(){
+            var that = this;
+            return _.where(that.children, {moneySource: "individual"});
           }
         };
         this.cycle(d.cycle).children.push(polAttributes);
@@ -83,7 +92,9 @@ $(document).ready(function(){
       populate: function(results){
         var that = this;
         _.each(results, function(d){
-          that.addRecord(d);
+          if(d.house == "senate"){
+            that.addRecord(d);
+          }
         });
       }
     };
@@ -162,10 +173,23 @@ $(document).ready(function(){
       return message(d);
     };
 
+    // Set up facebox settings
+    $.facebox.settings.closeImage = 'public/closelabel.png';
+    $.facebox.settings.loadingImage = 'public/loading.gif';
 
-    d3.json("public/senate.json", function(error, senate_data){
-      nope = root = contributionData.populate(senate_data.result);
-      sdata = senate_data;
+    var loadAreaLightbox= function(name){
+      $.facebox(
+        '<div id="candidate_detailed_view" style="width: 970; height: 550;">' +
+          '<h2 class="chart_title">' + name + '</h2>' +
+          '<div class="indContributions"></div>' +
+          '<div class="pacContributions"></div>' +
+        '</div>'
+      );
+    };
+
+    d3.csv("public/pols.csv", function(error, congress){
+      nope = root = contributionData.populate(congress);
+      sdata = congress;
 
       // create circles
 
@@ -182,7 +206,6 @@ $(document).ready(function(){
       };
 
       var sortedYears = _.sortBy(contributionData.children, function(d){ return parseInt(d.name, 10); });
-      console.log(sortedYears);
 
       var yearSvg = d3.select(".years_container").selectAll("svg")
           .data(sortedYears)
@@ -223,7 +246,7 @@ $(document).ready(function(){
             .attr("height", 200)
             .attr("class", function(d){ return "candidate " + d.name; })
             .on("click", function(d){
-              console.log(d.name);
+              showDetail(d);
             });
 
         candidateContainer.append("div")
@@ -311,7 +334,23 @@ $(document).ready(function(){
 
       };
 
+      var contributionTable = function(c){
+        console.log("called");
+        var total = _.reduce(c, function(sum, num){ return sum + num.size; }, 0);
+        var t = "";
+        t += "<table class='contribution_table'><tr><td>Industry</td><td>Amount</td><td>Percentage</td></tr>";
+        _.each(c, function(d){
+          t += "<tr><td>" + d.name + "</td><td>" + d.size + "</td><td>" + (d.size / total) + "</td></tr>";
+        });
+        t += "</table>";
+        return t;
+      };
+
       showDetail = function(d){
+
+        loadAreaLightbox(d.name);
+        $('.indContributions').html(contributionTable(d.individualContributions()));
+        $('.pacContributions').html(contributionTable(d.pacContributions()));
       };
     });
 
