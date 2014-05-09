@@ -6,6 +6,8 @@ $(document).ready(function(){
         return (typeof record === 'undefined')? false : true;
     };
 
+    sectorMappings = { 1: " Agribusiness", 2: " Communic/Electronics", 3: " Construction", 4: " Defense", 5: " Energy/Nat Resource", 6: " Finance/Insur/RealEst", 7: " Health", 8: " Ideology/Single-Issue", 9: " Labor", 10: " Lawyers & Lobbyists", 11: " Misc Business", 12: " Non-contribution", 13: " Other", 14: " Party Cmte", 15: " Transportation", 16: " Unknown", 17: " Candidate", 18: " Joint Candidate Cmtes" };
+
     // Code to organize the contributinos data to the desired format
     contributionData = {
       name: 'Contributions',
@@ -187,7 +189,7 @@ $(document).ready(function(){
       );
     };
 
-    d3.csv("public/smaller_pols.csv", function(error, congress){
+    d3.csv("public/smallest_pols.csv", function(error, congress){
       nope = root = contributionData.populate(congress);
       sdata = congress;
 
@@ -297,7 +299,7 @@ $(document).ready(function(){
               if(d.children){
                 return "node";
               } else {
-                return d.moneySource == "pac" ? "pac leaf node" : "individual leaf node";
+                return d.moneySource == "p" ? "pac leaf node" : "individual leaf node";
               }
             })
             .attr("transform", function(d) {
