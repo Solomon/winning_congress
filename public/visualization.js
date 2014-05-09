@@ -189,7 +189,7 @@ $(document).ready(function(){
       );
     };
 
-    d3.csv("public/smallest_pols.csv", function(error, congress){
+    d3.csv("public/smallest_senate_only.csv", function(error, congress){
       nope = root = contributionData.populate(congress);
       sdata = congress;
 
@@ -349,7 +349,6 @@ $(document).ready(function(){
       };
 
       showDetail = function(d){
-
         loadAreaLightbox(d.name);
         $('.indContributions').html(contributionTable(d.individualContributions()));
         $('.pacContributions').html(contributionTable(d.pacContributions()));
