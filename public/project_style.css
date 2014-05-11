@@ -115,5 +115,7 @@ circle.parent:hover {
   color: red;
 }
 
-
+.contribution_table td {
+  padding: 4px 30px 0 0;
+}
 

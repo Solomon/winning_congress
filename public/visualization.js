@@ -183,8 +183,11 @@ $(document).ready(function(){
       $.facebox(
         '<div id="candidate_detailed_view" style="width: 970; height: 550;">' +
           '<h2 class="chart_title">' + name + '</h2>' +
-          '<div class="indContributions"></div>' +
-          '<div class="pacContributions"></div>' +
+          '<div><h3>Contributions From Individuals</h3>' +
+            '<div class="indContributions"></div>' +
+          '</div><div><h3>Contributions From Pacs</h3>' +
+            '<div class="pacContributions"></div>' +
+          '</div>' +
         '</div>'
       );
     };
@@ -336,13 +339,16 @@ $(document).ready(function(){
 
       };
 
+      var percentFormat = d3.format("%");
+      var dollarFormat = d3.format("$,");
+
       var contributionTable = function(c){
-        console.log("called");
-        var total = _.reduce(c, function(sum, num){ return sum + num.size; }, 0);
+        var sorted = _.sortBy(c, function(n){ return n.size * -1; });
+        var total = _.reduce(sorted, function(sum, num){ return sum + num.size; }, 0);
         var t = "";
         t += "<table class='contribution_table'><tr><td>Industry</td><td>Amount</td><td>Percentage</td></tr>";
-        _.each(c, function(d){
-          t += "<tr><td>" + d.name + "</td><td>" + d.size + "</td><td>" + (d.size / total) + "</td></tr>";
+        _.each(sorted, function(d){
+          t += "<tr><td>" + d.name + "</td><td>" + dollarFormat(d.size) + "</td><td>" + percentFormat(d.size / total) + "</td></tr>";
         });
         t += "</table>";
         return t;
