@@ -107,7 +107,7 @@ $(document).ready(function(){
         x = d3.scale.linear().range([0, diameter]),
         y = d3.scale.linear().range([0, diameter]);
 
-   showTooltips = false;
+   showTooltips = true;
 
     var pack = d3.layout.pack()
       .sort(function(a, b){ return a.size > b.size ? a : b; })
@@ -122,6 +122,7 @@ $(document).ready(function(){
 
     var dollarFormat = d3.format("$,.0f");
     var percentFormat = d3.format(".2p");
+    var partyName = d3.scale.ordinal().domain(["D","R","I"]).range(["democrat", "republican", "independent"]);
 
     var message = function(d){
       if(d.tooltipLevel == 'cycle'){
@@ -148,8 +149,7 @@ $(document).ready(function(){
     var politicianMessage = function(d){
       var message = "";
       message += "<div class='politicianMessage'>"
-      var party = d.party === "D" ? "democrat" : "republican";
-      message += "<div class='name " + party + "'>" + d.displayName + "</div>";
+      message += "<div class='name " + partyName(d.party) + "'>" + d.displayName + "</div>";
       message += "<div class='party_state'>" + d.party + " - " + d.state + "</div>";
       message += "<div class='details'> Total Raised: " + dollarFormat(d.value);
       message += "<br/>";
@@ -183,9 +183,10 @@ $(document).ready(function(){
       $.facebox(
         '<div id="candidate_detailed_view" style="width: 970; height: 550;">' +
           '<h2 class="chart_title">' + name + '</h2>' +
-          '<div><h3>Contributions From Individuals</h3>' +
+          '<div class="contributionContainer bigIndividualCircle"></div>' +
+          '<div class="contributionContainer"><h3>Contributions From Individuals</h3>' +
             '<div class="indContributions"></div>' +
-          '</div><div><h3>Contributions From Pacs</h3>' +
+          '</div class="contributionContainer"><div><h3>Contributions From Pacs</h3>' +
             '<div class="pacContributions"></div>' +
           '</div>' +
         '</div>'

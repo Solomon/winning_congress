@@ -95,6 +95,9 @@ circle.parent:hover {
   width: 250px
 }
 
+.contributionContainer {
+}
+
 .politicianMessage {
   margin-top: 43px;
 }
@@ -115,6 +118,9 @@ circle.parent:hover {
   color: red;
 }
 
+.politicianMessage .independent {
+  color: green;
+}
 .contribution_table td {
   padding: 4px 30px 0 0;
 }
