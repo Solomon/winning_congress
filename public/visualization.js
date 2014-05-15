@@ -109,7 +109,7 @@ $(document).ready(function(){
 
    showTooltips = true;
 
-    var pack = d3.layout.pack()
+    pack = d3.layout.pack()
       .sort(function(a, b){ return a.size > b.size ? a : b; })
       .size([diameter - padding, diameter - padding])
       .padding(0)
@@ -164,6 +164,7 @@ $(document).ready(function(){
     var contributionMessage = function(d){
       var message = "";
       message += "<h3>" + d.name + "</h3>";
+      message += d.moneySource == "p" ? "Pac" : "Individual";
       message += "<br/>";
       message += "Total Raised: " + dollarFormat(d.value);
       message += "<br/>";
@@ -184,13 +185,64 @@ $(document).ready(function(){
         '<div id="candidate_detailed_view" style="width: 970; height: 550;">' +
           '<h2 class="chart_title">' + name + '</h2>' +
           '<div class="contributionContainer bigIndividualCircle"></div>' +
-          '<div class="contributionContainer"><h3>Contributions From Individuals</h3>' +
+          '<div class="contributionContainer">' +
+            '<h3>Contributions From Individuals</h3>' +
             '<div class="indContributions"></div>' +
-          '</div class="contributionContainer"><div><h3>Contributions From Pacs</h3>' +
+          '</div>' +
+          '<div class="contributionContainer">' +
+            '<h3>Contributions From Pacs</h3>' +
             '<div class="pacContributions"></div>' +
           '</div>' +
         '</div>'
       );
+    };
+
+    drawCircles = function(d){
+      var g = d3.select(this);
+
+      // Centers the candidate circles
+      var centerOffset = function(d){
+        var offset = 100 - d.r;
+        g.attr("transform", "translate(" + offset + "," + offset + ")");
+      };
+
+      var node = g.datum(d).selectAll(".node")
+        .data(packPols)
+      .enter().append("g")
+        .attr("class", function(d){
+          if(d.children){
+            return "node";
+          } else {
+            return d.moneySource == "p" ? "pac leaf node" : "individual leaf node";
+          }
+        })
+        .attr("transform", function(d) {
+          if(d.children){
+            centerOffset(d);
+            return "translate(" + d.x + "," + d.y + ")";
+          } else {
+            return "translate(" + d.x + "," + d.y + ")";
+          }
+        });
+
+
+      node.append("circle")
+        .attr("r", function(d){ return d.r; })
+        .attr("class", function(d){ return d.children ? "parent" : "child"; })
+        .on("mouseover", function(d){
+          if(showTooltips && d.tooltipLevel == "contribution"){
+            tooltip.html(tooltipMessage(d));
+            tooltip.style("visibility", "visible");
+          }
+          return;
+        })
+        .on("mousemove", function(){
+          return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 20) + "px");
+        })
+        .on("mouseout", function(){
+          tooltip.style("visibility", "hidden");
+          return;
+        })
     };
 
     d3.csv("public/smallest_senate_only.csv", function(error, congress){
@@ -287,53 +339,6 @@ $(document).ready(function(){
           return candPack.nodes(d);
         };
 
-        drawCircles = function(d){
-          var g = d3.select(this);
-
-          // Centers the candidate circles
-          var centerOffset = function(d){
-            var offset = 100 - d.r;
-            g.attr("transform", "translate(" + offset + "," + offset + ")");
-          };
-
-          var node = g.datum(d).selectAll(".node")
-            .data(packPols)
-          .enter().append("g")
-            .attr("class", function(d){
-              if(d.children){
-                return "node";
-              } else {
-                return d.moneySource == "p" ? "pac leaf node" : "individual leaf node";
-              }
-            })
-            .attr("transform", function(d) {
-              if(d.children){
-                centerOffset(d);
-                return "translate(" + d.x + "," + d.y + ")";
-              } else {
-                return "translate(" + d.x + "," + d.y + ")";
-              }
-            });
-
-
-          node.append("circle")
-            .attr("r", function(d){ return d.r; })
-            .attr("class", function(d){ return d.children ? "parent" : "child"; })
-            .on("mouseover", function(d){
-              if(showTooltips && d.tooltipLevel == "contribution"){
-                tooltip.html(tooltipMessage(d));
-                tooltip.style("visibility", "visible");
-              }
-              return;
-            })
-            .on("mousemove", function(){
-              return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 20) + "px");
-            })
-            .on("mouseout", function(){
-              tooltip.style("visibility", "hidden");
-              return;
-            })
-        };
 
         cviz.each(drawCircles);
 
@@ -355,10 +360,59 @@ $(document).ready(function(){
         return t;
       };
 
+      loadDetailCircle = function(d){
+        packPols(d);
+        console.log(d);
+        console.log(d.value);
+        var detailContainer = d3.select(".bigIndividualCircle")
+          .append("svg")
+            .attr("width", function(d){ console.log(d); return 200; })
+            .attr("height", 200)
+          .append("g")
+            .attr("class", "hiddenOG");
+            //.call(drawCircles)
+        candPack.size([200,200])
+        var node = detailContainer.datum(d).selectAll(".node")
+          .data(candPack)
+        .enter().append("g")
+          .attr("class", function(d){
+            if(d.children){
+              return "node";
+            } else {
+              return d.moneySource == "p" ? "pac leaf node" : "individual leaf node";
+            }
+          })
+          .attr("transform", function(d) {
+            if(d.children){
+              return "translate(" + d.x + "," + d.y + ")";
+            } else {
+              return "translate(" + d.x + "," + d.y + ")";
+            }
+          });
+
+
+        node.append("circle")
+          .attr("r", function(d){ return d.r; })
+          .attr("class", function(d){ return d.children ? "parent" : "child"; })
+          .on("mouseover", function(d){
+            tooltip.html(tooltipMessage(d));
+            return tooltip.style("visibility", "visible");
+          })
+          .on("mousemove", function(){
+            var top = d3.event.pageY - parseInt($('#facebox').css('top'), 10);
+            var left = d3.event.pageX - parseInt($('#facebox').css('left'), 10);
+            return tooltip.style("top", (top - 10) + "px").style("left", (left + 20) + "px");
+          })
+          .on("mouseout", function(){
+            return tooltip.style("visibility", "hidden");
+          })
+      };
+
       showDetail = function(d){
         loadAreaLightbox(d.name);
         $('.indContributions').html(contributionTable(d.individualContributions()));
         $('.pacContributions').html(contributionTable(d.pacContributions()));
+        loadDetailCircle(d);
       };
     });
 
