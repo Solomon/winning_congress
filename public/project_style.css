@@ -84,7 +84,7 @@ circle.parent:hover {
 .vizTooltip {
   height: auto;
   width: auto;
-  z-index: 10;
+  z-index: 1000;
   position: absolute;
   background: white;
   padding: 20px;
@@ -92,10 +92,13 @@ circle.parent:hover {
 }
 
 .cand_message {
-  width: 250px
+  width: 250px;
 }
 
 .contributionContainer {
+  margin: 0 20px;
+  float: left;
+  display: block;
 }
 
 .politicianMessage {

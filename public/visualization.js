@@ -181,10 +181,10 @@ $(document).ready(function(){
     $.facebox.settings.loadingImage = 'public/loading.gif';
 
     var loadAreaLightbox= function(name){
-      $.facebox(
-        '<div id="candidate_detailed_view" style="width: 970; height: 550;">' +
+      jQuery.facebox(
+        '<div id="candidate_detailed_view" style="width: 1100px;">' +
           '<h2 class="chart_title">' + name + '</h2>' +
-          '<div class="contributionContainer bigIndividualCircle"></div>' +
+          '<div class="bigIndividualCircle"></div>' +
           '<div class="contributionContainer">' +
             '<h3>Contributions From Individuals</h3>' +
             '<div class="indContributions"></div>' +
@@ -352,26 +352,25 @@ $(document).ready(function(){
         var sorted = _.sortBy(c, function(n){ return n.size * -1; });
         var total = _.reduce(sorted, function(sum, num){ return sum + num.size; }, 0);
         var t = "";
-        t += "<table class='contribution_table'><tr><td>Industry</td><td>Amount</td><td>Percentage</td></tr>";
+        t += "<table class='contribution_table'><tr><td>Industry</td><td>Amount</td><td></td></tr>";
         _.each(sorted, function(d){
           t += "<tr><td>" + d.name + "</td><td>" + dollarFormat(d.size) + "</td><td>" + percentFormat(d.size / total) + "</td></tr>";
         });
+        t += "<tr><td><strong>Total</strong></td><td><strong>" + dollarFormat(total) + "</strong></td></tr>";
         t += "</table>";
         return t;
       };
 
       loadDetailCircle = function(d){
         packPols(d);
-        console.log(d);
-        console.log(d.value);
         var detailContainer = d3.select(".bigIndividualCircle")
           .append("svg")
-            .attr("width", function(d){ console.log(d); return 200; })
-            .attr("height", 200)
+            .attr("width", 320)
+            .attr("height", 320)
           .append("g")
             .attr("class", "hiddenOG");
             //.call(drawCircles)
-        candPack.size([200,200])
+        candPack.size([300,300])
         var node = detailContainer.datum(d).selectAll(".node")
           .data(candPack)
         .enter().append("g")
@@ -395,6 +394,7 @@ $(document).ready(function(){
           .attr("r", function(d){ return d.r; })
           .attr("class", function(d){ return d.children ? "parent" : "child"; })
           .on("mouseover", function(d){
+            console.log('in');
             tooltip.html(tooltipMessage(d));
             return tooltip.style("visibility", "visible");
           })
@@ -404,6 +404,7 @@ $(document).ready(function(){
             return tooltip.style("top", (top - 10) + "px").style("left", (left + 20) + "px");
           })
           .on("mouseout", function(){
+            console.log('out');
             return tooltip.style("visibility", "hidden");
           })
       };
