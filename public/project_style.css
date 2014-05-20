@@ -26,11 +26,6 @@ circle {
   stroke-width: 1px;
 }
 
-circle.parent:hover {
-  stroke: green;
-  stroke-width: 2px;
-}
-
 .individual circle {
   fill: yellow;
   fill-opacity: 1;
@@ -46,7 +41,7 @@ circle.parent:hover {
 
 .active circle {
   stroke: red;
-  stroke-width: 2px;
+  stroke-width: 1px;
 }
 
 .pac circle {

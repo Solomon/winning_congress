@@ -49,6 +49,7 @@ $(document).ready(function(){
           name: d.politician_name, party: d.politician_name.slice(-2,-1),
           district: d.district_run_for, children: [], tooltipLevel: "politician",
           state: d.district_run_for.substring(0,2), displayName: d.politician_name.slice(0, -4),
+          urlName: d.politician_name.slice(0, -4).toLowerCase().replace(/\ /g, "_"),
           pacTotal: function(){
             var that = this;
             return _.reduce(that.children, function(sum, num){ return num.moneySource == "p" ? sum + num.value : sum; }, 0);
@@ -118,7 +119,10 @@ $(document).ready(function(){
 
     var tooltip = d3.select("body").append("div")
       .attr("class", "vizTooltip")
-      .text("");
+      .style("position", "absolute")
+      .style("z-index", "10000")
+      .style("visibility", "hidden")
+      .text("Winning Congress");
 
     var dollarFormat = d3.format("$,.0f");
     var percentFormat = d3.format(".2p");
@@ -399,8 +403,8 @@ $(document).ready(function(){
             return tooltip.style("visibility", "visible");
           })
           .on("mousemove", function(){
-            var top = d3.event.pageY - parseInt($('#facebox').css('top'), 10);
-            var left = d3.event.pageX - parseInt($('#facebox').css('left'), 10);
+            var top = d3.event.pageY;
+            var left = d3.event.pageX;
             return tooltip.style("top", (top - 10) + "px").style("left", (left + 20) + "px");
           })
           .on("mouseout", function(){
@@ -416,10 +420,5 @@ $(document).ready(function(){
         loadDetailCircle(d);
       };
     });
-
-
-
-
-
   }
 });
