@@ -291,13 +291,13 @@ $(document).ready(function(){
           })
           .on("click", function(d){
             setActive(d.name);
-            displayYear(parseInt(d.name, 10));
+            displayYear(d.name);
           });
     };
 
     var displayYear = function(year){
       $("#candidates").html("");
-      cycleCandidates = _.find(contributionData.children, function(d){ return parseInt(d.name, 10) === year; });
+      cycleCandidates = _.find(contributionData.children, function(d){ return d.name === year; });
       sortedCandidates = _.sortBy(cycleCandidates.children, function(d){ return d.value; }).reverse();
       candidateContainer = d3.select("#candidates").selectAll(".candidate")
           .data(sortedCandidates);
@@ -413,5 +413,23 @@ $(document).ready(function(){
       $('.pacContributions').html(contributionTable(d.pacContributions()));
       loadDetailCircle(d);
     };
+
+    var CongressRouter = Backbone.Router.extend({
+      routes: {
+        '': "home",
+        'year/:year' : 'year'
+      },
+
+      home: function(){
+        console.log('in the home function');
+      },
+
+      year: function(year){
+        displayYear(year);
+      }
+    });
+
+    appRouter = new CongressRouter();
+    Backbone.history.start({pushState: true});
   }
 });
