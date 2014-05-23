@@ -44,6 +44,10 @@ $(document).ready(function(){
         return _.findWhere(this.cycle(cycle).children, {name: name});
       },
 
+      politicianFromUrl: function(cycle, url_name){
+        return _.findWhere(this.cycle(cycle).children, {urlName: url_name});
+      },
+
       addPolitician: function(d){
         var polAttributes = {
           name: d.politician_name, party: d.politician_name.slice(-2,-1),
@@ -247,11 +251,6 @@ $(document).ready(function(){
         })
     };
 
-    d3.csv("public/smallest_senate_only.csv", function(error, congress){
-      contributionData.populate(congress);
-      createYearlyCircles();
-    });
-
     var createYearlyCircles = function(){
       pack(contributionData);
       var cycleTotals = _.map(contributionData.children, function(d){ return d.value;});
@@ -259,11 +258,6 @@ $(document).ready(function(){
         .range([20, 50])
         .domain([_.min(cycleTotals), _.max(cycleTotals)]);
 
-      var setActive = function(year){
-        activeYear = year;
-        $('#years .active').removeClass('active');
-        $("#years .year_" + year).addClass('active');
-      };
 
       var sortedYears = _.sortBy(contributionData.children, function(d){ return parseInt(d.name, 10); });
 
@@ -290,12 +284,18 @@ $(document).ready(function(){
             $('.cycle_message').html(cycleMessage(d));
           })
           .on("click", function(d){
-            setActive(d.name);
-            displayYear(d.name);
+            appRouter.navigate("year/" + d.name, {trigger: true});
           });
     };
 
+    var setActiveYear = function(year){
+      activeYear = year;
+      $('#years .active').removeClass('active');
+      $("#years .year_" + year).addClass('active');
+    };
+
     var displayYear = function(year){
+      setActiveYear(year);
       $("#candidates").html("");
       cycleCandidates = _.find(contributionData.children, function(d){ return d.name === year; });
       sortedCandidates = _.sortBy(cycleCandidates.children, function(d){ return d.value; }).reverse();
@@ -307,7 +307,7 @@ $(document).ready(function(){
           .attr("height", 200)
           .attr("class", function(d){ return "candidate " + d.name; })
           .on("click", function(d){
-            showDetail(d);
+            appRouter.navigate('year/' + year + '/candidate/' + d.urlName, {trigger: true});
           });
 
       candidateContainer.append("div")
@@ -417,7 +417,8 @@ $(document).ready(function(){
     var CongressRouter = Backbone.Router.extend({
       routes: {
         '': "home",
-        'year/:year' : 'year'
+        'year/:year' : 'year',
+        'year/:year/candidate/:candidate': 'candidate'
       },
 
       home: function(){
@@ -426,10 +427,22 @@ $(document).ready(function(){
 
       year: function(year){
         displayYear(year);
+      },
+
+      candidate: function(year, candidate){
+        displayYear(year)
+        var cand = contributionData.politicianFromUrl(year, candidate)
+        showDetail(cand);
       }
     });
 
-    appRouter = new CongressRouter();
-    Backbone.history.start({pushState: true});
+    d3.csv("public/smallest_senate_only.csv", function(error, congress){
+      contributionData.populate(congress);
+      createYearlyCircles();
+
+      appRouter = new CongressRouter();
+      Backbone.history.start();
+    });
+
   }
 });
