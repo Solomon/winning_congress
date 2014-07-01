@@ -20,14 +20,15 @@
 }
 
 circle {
-  fill: #80B3FF;
+  fill: #f6e8c3;
   fill-opacity: .25;
-  stroke: #80B3FF;
-  stroke-width: 1px;
+  stroke: #f6e8c3;
+  stroke-width: 2px;
 }
 
 .individual circle {
-  fill: yellow;
+  fill: #5ab4ac;
+  stroke-width: 0px;
   fill-opacity: 1;
 }
 
@@ -45,7 +46,8 @@ circle {
 }
 
 .pac circle {
-  fill: black;
+  fill: #8c510a;
+  stroke-width: 0px;
   fill-opacity: 1;
 }
 
@@ -109,11 +111,11 @@ circle {
 }
 
 .politicianMessage .democrat {
-  color: blue;
+  color: #336699;
 }
 
 .politicianMessage .republican {
-  color: red;
+  color: #e91d0e;
 }
 
 .politicianMessage .independent {

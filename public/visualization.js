@@ -422,7 +422,6 @@ $(document).ready(function(){
       },
 
       home: function(){
-        console.log('in the home function');
       },
 
       year: function(year){
