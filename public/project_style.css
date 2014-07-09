@@ -19,11 +19,20 @@
   -moz-transition: opacity 500ms ease-in;
 }
 
+
+
 circle {
-  fill: #f6e8c3;
-  fill-opacity: .25;
-  stroke: #f6e8c3;
-  stroke-width: 2px;
+  /*fill: #f6e8c3;*/
+  fill-opacity: .00;
+  stroke: #463E3F;
+  stroke-width: 1px;
+  stroke-opacity: .5;
+}
+
+.year_circle {
+  fill: blue;
+  fill-opacity: .05;
+  stroke: blue;
 }
 
 .individual circle {
@@ -86,6 +95,7 @@ circle {
   background: white;
   padding: 20px;
   border-radius: 5px;
+  border 2px solid black;
 }
 
 .cand_message {
@@ -93,9 +103,19 @@ circle {
 }
 
 .contributionContainer {
-  margin: 0 20px;
   float: left;
   display: block;
+  margin: 0 80px 20px 80px;
+  /*width: 40%*/
+  /*margin-left 50px;*/
+  /*margin-right 5%;*/
+}
+
+.topRow {
+  float: left;
+  display: block;
+  margin: 40px 80px;
+  /*width:40%;*/
 }
 
 .politicianMessage {

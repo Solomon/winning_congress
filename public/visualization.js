@@ -58,6 +58,10 @@ $(document).ready(function(){
             var that = this;
             return _.reduce(that.children, function(sum, num){ return num.moneySource == "p" ? sum + num.value : sum; }, 0);
           },
+          individualTotal: function(){
+            var pacTotal = this.pacTotal();
+            return this.value - pacTotal;
+          },
           pacPercentage: function(){
             var pacTotal = this.pacTotal();
             return pacTotal / this.value;
@@ -186,11 +190,19 @@ $(document).ready(function(){
     $.facebox.settings.closeImage = 'public/closelabel.png';
     $.facebox.settings.loadingImage = 'public/loading.gif';
 
-    var loadAreaLightbox= function(name){
+    var loadAreaLightbox= function(d){
       jQuery.facebox(
         '<div id="candidate_detailed_view" style="width: 1100px;">' +
-          '<h2 class="chart_title">' + name + '</h2>' +
-          '<div class="bigIndividualCircle"></div>' +
+          '<div class="candAttributes topRow">' +
+            '<h2 class="chart_title">' + d.name + '</h2>' +
+            '<h4 class="chart_title">' + d.state + '</h2>' +
+            '<h4 class="chart_title">Total Raised From Individuals: ' + dollarFormat(d.individualTotal()) + '</h2>' +
+            '<h4 class="chart_title">Total Raised From Pacs: ' + dollarFormat(d.pacTotal()) + '</h2>' +
+            '<h4 class="chart_title">Percent From Individuals: ' + percentFormat(1-d.pacPercentage()) + '</h2>' +
+            '<h4 class="chart_title">Percent From Pacs: ' + percentFormat(d.pacPercentage()) + '</h2>' +
+          '</div>' +
+          '<div class="bigIndividualCircle topRow"></div>' +
+          '<div class="clear"></div>' +
           '<div class="contributionContainer">' +
             '<h3>Contributions From Individuals</h3>' +
             '<div class="indContributions"></div>' +
@@ -280,6 +292,7 @@ $(document).ready(function(){
         .append("circle")
           .attr("transform", function(d){ return "translate(" + (cycleSize(d.value) + 10) +",50)"; })
           .attr("r", function(d){ return cycleSize(d.value);})
+          .attr("class", "year_circle")
           .on("mouseover", function(d){
             $('.cycle_message').html(cycleMessage(d));
           })
@@ -408,7 +421,7 @@ $(document).ready(function(){
     };
 
     var showDetail = function(d){
-      loadAreaLightbox(d.name);
+      loadAreaLightbox(d);
       $('.indContributions').html(contributionTable(d.individualContributions()));
       $('.pacContributions').html(contributionTable(d.pacContributions()));
       loadDetailCircle(d);
