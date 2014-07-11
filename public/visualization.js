@@ -146,13 +146,13 @@ $(document).ready(function(){
 
     var cycleMessage = function(d){
       var message = "";
-      message += "<span>Election Cycle - " + d.name + "</span>";
+      message += "<span><strong>Election Cycle</strong> - " + d.name + "</span>";
       message += "<span>";
-      message += "Total Raised: " + dollarFormat(d.value) + "</span>";
+      message += "<strong>Total Raised</strong> - " + dollarFormat(d.value) + "</span>";
       message += "<span>";
-      message += "Number of Candidates: " + d.candidateCount() + "</span>";
-      message += "<span>";
-      message += "Average Per Candidate: " + dollarFormat(d.candidateAverage()) + "</span>";
+      message += "<strong>Number of Candidates</strong> - " + d.candidateCount() + "</span>";
+      message += "<span><strong>";
+      message += "Average Per Candidate</strong> - " + dollarFormat(d.candidateAverage()) + "</span>";
       return message;
     };
 
@@ -194,8 +194,8 @@ $(document).ready(function(){
       jQuery.facebox(
         '<div id="candidate_detailed_view" style="width: 1100px;">' +
           '<div class="candAttributes topRow">' +
-            '<h2 class="chart_title">' + d.name + '</h2>' +
-            '<h4 class="chart_title">' + d.state + '</h2>' +
+            '<h2 class="chart_title">'  + d.name + '</h2>' +
+            '<h4 class="chart_title">' + d.parent.name + ' - ' + d.state + '</h2>' +
             '<h4 class="chart_title">Total Raised From Individuals: ' + dollarFormat(d.individualTotal()) + '</h2>' +
             '<h4 class="chart_title">Total Raised From Pacs: ' + dollarFormat(d.pacTotal()) + '</h2>' +
             '<h4 class="chart_title">Percent From Individuals: ' + percentFormat(1-d.pacPercentage()) + '</h2>' +
@@ -447,14 +447,27 @@ $(document).ready(function(){
         showDetail(cand);
       }
     });
-
-    d3.csv("public/smallest_senate_only.csv", function(error, congress){
-      contributionData.populate(congress);
+    $.ajax({
+      url: "/public/pols_so_test.csv.gz.txt",
+      cache: false
+    })
+    .done(function (b64file) {
+      binary = JXG.decompress(b64file);
+      parsed = d3.csv.parse(binary);
+      contributionData.populate(parsed);
       createYearlyCircles();
 
       appRouter = new CongressRouter();
       Backbone.history.start();
     });
+
+    //d3.csv("public/smallest_senate_only.csv", function(error, congress){
+      //contributionData.populate(congress);
+      //createYearlyCircles();
+
+      //appRouter = new CongressRouter();
+      //Backbone.history.start();
+    //});
 
   }
 });

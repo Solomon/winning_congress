@@ -50,8 +50,8 @@ circle {
 }
 
 .active circle {
-  stroke: red;
-  stroke-width: 1px;
+  stroke-width: 2px;
+  stroke-opacity: .75;
 }
 
 .pac circle {
