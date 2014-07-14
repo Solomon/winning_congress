@@ -448,8 +448,8 @@ $(document).ready(function(){
       }
     });
     $.ajax({
-      url: "/public/pols_so_test.csv.gz.txt",
-      cache: false
+      url: "/public/pols_so_test.csv.gz.txt"
+      //cache: false
     })
     .done(function (b64file) {
       binary = JXG.decompress(b64file);
