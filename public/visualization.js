@@ -9,105 +9,110 @@ $(document).ready(function(){
     sectorMappings = { 1: " Agribusiness", 2: " Communic/Electronics", 3: " Construction", 4: " Defense", 5: " Energy/Nat Resource", 6: " Finance/Insur/RealEst", 7: " Health", 8: " Ideology/Single-Issue", 9: " Labor", 10: " Lawyers & Lobbyists", 11: " Misc Business", 12: " Non-contribution", 13: " Other", 14: " Party Cmte", 15: " Transportation", 16: " Unknown", 17: " Candidate", 18: " Joint Candidate Cmtes" };
 
     // Code to organize the contributinos data to the desired format
-    contributionData = {
-      name: 'Contributions',
-      tooltipLevel: "contributions",
-      // Add senate & house children here
-      children: [],
+    createContributions = function(branch, data){
+      var contributionObject = {
+        name: 'Contributions',
+        tooltipLevel: "contributions",
+        branch: branch,
+        // Add senate & house children here
+        children: [],
 
-      hasCycle: function(year){
-        return hasObjectWithName(this.children, year);
-      },
+        hasCycle: function(year){
+          return hasObjectWithName(this.children, year);
+        },
 
-      cycle: function(year){
-        return _.findWhere(this.children, {name: year});
-      },
+        cycle: function(year){
+          return _.findWhere(this.children, {name: year});
+        },
 
-      addCycle: function(d){
-        this.children.push({
-          name: d.cycle, children: [], tooltipLevel: "cycle",
-          candidateCount: function(){
-            return this.children.length;
-          },
-          candidateAverage: function(){
-            return this.value / this.candidateCount();
-          }
-        });
-        this.addPolitician(d);
-      },
-
-      hasPolitician: function(cycle, name){
-        return hasObjectWithName(this.cycle(cycle).children, name);
-      },
-
-      politician: function(cycle, name){
-        return _.findWhere(this.cycle(cycle).children, {name: name});
-      },
-
-      politicianFromUrl: function(cycle, url_name){
-        return _.findWhere(this.cycle(cycle).children, {urlName: url_name});
-      },
-
-      addPolitician: function(d){
-        var polAttributes = {
-          name: d.politician_name, party: d.politician_name.slice(-2,-1),
-          district: d.district_run_for, children: [], tooltipLevel: "politician",
-          state: d.district_run_for.substring(0,2), displayName: d.politician_name.slice(0, -4),
-          urlName: d.politician_name.slice(0, -4).toLowerCase().replace(/\ /g, "_"),
-          pacTotal: function(){
-            var that = this;
-            return _.reduce(that.children, function(sum, num){ return num.moneySource == "p" ? sum + num.value : sum; }, 0);
-          },
-          individualTotal: function(){
-            var pacTotal = this.pacTotal();
-            return this.value - pacTotal;
-          },
-          pacPercentage: function(){
-            var pacTotal = this.pacTotal();
-            return pacTotal / this.value;
-          },
-          pacContributions: function(){
-            var that = this;
-            return _.where(that.children, {moneySource: "p"});
-          },
-          individualContributions: function(){
-            var that = this;
-            return _.where(that.children, {moneySource: "i"});
-          }
-        };
-        this.cycle(d.cycle).children.push(polAttributes);
-        this.addIndustryContribution(d);
-      },
-
-      addIndustryContribution: function(d){
-        var industryAttributes = {
-          name: d.sector, moneySource: d.money_source,
-          size: parseInt(d.amount_raised, 10), tooltipLevel: "contribution",
-          percentOfTotal: function(){
-            return this.value / this.parent.value;
-          }
-        };
-        this.politician(d.cycle, d.politician_name).children.push(industryAttributes);
-      },
-
-      addRecord: function(d){
-        if(!this.hasCycle(d.cycle)){
-          this.addCycle(d);
-        } else if(!this.hasPolitician(d.cycle, d.politician_name)){
+        addCycle: function(d){
+          this.children.push({
+            name: d.cycle, children: [], tooltipLevel: "cycle",
+            candidateCount: function(){
+              return this.children.length;
+            },
+            candidateAverage: function(){
+              return this.value / this.candidateCount();
+            }
+          });
           this.addPolitician(d);
-        } else {
-          this.addIndustryContribution(d);
-        }
-      },
+        },
 
-      populate: function(results){
-        var that = this;
-        _.each(results, function(d){
-          if(d.house == "s"){
-            that.addRecord(d);
+        hasPolitician: function(cycle, name){
+          return hasObjectWithName(this.cycle(cycle).children, name);
+        },
+
+        politician: function(cycle, name){
+          return _.findWhere(this.cycle(cycle).children, {name: name});
+        },
+
+        politicianFromUrl: function(cycle, url_name){
+          return _.findWhere(this.cycle(cycle).children, {urlName: url_name});
+        },
+
+        addPolitician: function(d){
+          var polAttributes = {
+            name: d.politician_name, party: d.politician_name.slice(-2,-1),
+            district: d.district_run_for, children: [], tooltipLevel: "politician",
+            state: d.district_run_for.substring(0,2), displayName: d.politician_name.slice(0, -4),
+            urlName: d.politician_name.slice(0, -4).toLowerCase().replace(/\ /g, "_"),
+            pacTotal: function(){
+              var that = this;
+              return _.reduce(that.children, function(sum, num){ return num.moneySource == "p" ? sum + num.value : sum; }, 0);
+            },
+            individualTotal: function(){
+              var pacTotal = this.pacTotal();
+              return this.value - pacTotal;
+            },
+            pacPercentage: function(){
+              var pacTotal = this.pacTotal();
+              return pacTotal / this.value;
+            },
+            pacContributions: function(){
+              var that = this;
+              return _.where(that.children, {moneySource: "p"});
+            },
+            individualContributions: function(){
+              var that = this;
+              return _.where(that.children, {moneySource: "i"});
+            }
+          };
+          this.cycle(d.cycle).children.push(polAttributes);
+          this.addIndustryContribution(d);
+        },
+
+        addIndustryContribution: function(d){
+          var industryAttributes = {
+            name: d.sector, moneySource: d.money_source,
+            size: parseInt(d.amount_raised, 10), tooltipLevel: "contribution",
+            percentOfTotal: function(){
+              return this.value / this.parent.value;
+            }
+          };
+          this.politician(d.cycle, d.politician_name).children.push(industryAttributes);
+        },
+
+        addRecord: function(d){
+          if(!this.hasCycle(d.cycle)){
+            this.addCycle(d);
+          } else if(!this.hasPolitician(d.cycle, d.politician_name)){
+            this.addPolitician(d);
+          } else {
+            this.addIndustryContribution(d);
           }
-        });
-      }
+        },
+
+        populate: function(branch, results){
+          var that = this;
+          _.each(results, function(d){
+            if(d.house == branch.charAt(0)){
+              that.addRecord(d);
+            }
+          });
+        }
+      };
+      contributionObject.populate(branch, data);
+      return contributionObject
     };
 
     // Code for visualization
@@ -264,6 +269,7 @@ $(document).ready(function(){
     };
 
     var createYearlyCircles = function(){
+      $('.years_container').html('');
       pack(contributionData);
       var cycleTotals = _.map(contributionData.children, function(d){ return d.value;});
       var cycleSize = d3.scale.linear()
@@ -297,7 +303,7 @@ $(document).ready(function(){
             $('.cycle_message').html(cycleMessage(d));
           })
           .on("click", function(d){
-            appRouter.navigate("year/" + d.name, {trigger: true});
+            appRouter.navigate(contributionData.branch + "/year/" + d.name, {trigger: true});
           });
     };
 
@@ -320,7 +326,7 @@ $(document).ready(function(){
           .attr("height", 200)
           .attr("class", function(d){ return "candidate " + d.name; })
           .on("click", function(d){
-            appRouter.navigate('year/' + year + '/candidate/' + d.urlName, {trigger: true});
+            appRouter.navigate(contributionData.branch + '/year/' + year + '/candidate/' + d.urlName, {trigger: true});
           });
 
       candidateContainer.append("div")
@@ -430,39 +436,62 @@ $(document).ready(function(){
     var CongressRouter = Backbone.Router.extend({
       routes: {
         '': "home",
-        'year/:year' : 'year',
-        'year/:year/candidate/:candidate': 'candidate'
+        ':branch/year/:year' : 'year',
+        ':branch/year/:year/candidate/:candidate': 'candidate'
       },
 
       home: function(){
       },
 
-      year: function(year){
+      year: function(branch, year){
+        setBranch(branch);
         displayYear(year);
       },
 
-      candidate: function(year, candidate){
-        displayYear(year)
-        var cand = contributionData.politicianFromUrl(year, candidate)
+      candidate: function(branch, year, candidate){
+        setBranch(branch);
+        displayYear(year);
+        var cand = contributionData.politicianFromUrl(year, candidate);
         showDetail(cand);
       }
     });
     $.ajax({
-      url: "/public/pols_so_test.csv.gz.txt"
+      url: "/public/smaller_pols.csv.gz.txt"
       //cache: false
     })
     .done(function (b64file) {
       binary = JXG.decompress(b64file);
       parsed = d3.csv.parse(binary);
-      contributionData.populate(parsed);
+      senate = createContributions('senate', parsed);
+      house = createContributions('house', parsed);
+      contributionData = house;
       createYearlyCircles();
 
       appRouter = new CongressRouter();
       Backbone.history.start();
     });
 
+    setBranch = function(branch){
+      if(branch == 'senate'){
+        contributionData = senate;
+      } else {
+        contributionData = house;
+      }
+      createYearlyCircles();
+    };
+
+    switchBranch = function(branch){
+      var currentUrl = document.URL.split('#')[1];
+      if(currentUrl){
+        var newUrl = branch == 'house' ? currentUrl.replace('senate','house') : currentUrl.replace('house', 'senate');
+      }
+      appRouter.navigate(newUrl, {trigger: true});
+    };
+
     //d3.csv("public/smallest_senate_only.csv", function(error, congress){
-      //contributionData.populate(congress);
+      //senate = createContributions('s', parsed);
+      //house = createContributions('h', parsed);
+      //contributionData = house;
       //createYearlyCircles();
 
       //appRouter = new CongressRouter();
