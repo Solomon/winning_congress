@@ -112,7 +112,7 @@ $(document).ready(function(){
         }
       };
       contributionObject.populate(branch, data);
-      return contributionObject
+      return contributionObject;
     };
 
     // Code for visualization
@@ -464,7 +464,7 @@ $(document).ready(function(){
       parsed = d3.csv.parse(binary);
       senate = createContributions('senate', parsed);
       house = createContributions('house', parsed);
-      contributionData = house;
+      contributionData = senate;
       createYearlyCircles();
 
       appRouter = new CongressRouter();
@@ -487,6 +487,16 @@ $(document).ready(function(){
       }
       appRouter.navigate(newUrl, {trigger: true});
     };
+
+    removeCandidate = function(){
+      var urlParams = document.URL.split('#')[1].split('/');
+      if(urlParams.length == 5){
+        var newParams = urlParams.slice(0,3).join('/');
+        appRouter.navigate(newParams, {trigger: true});
+      }
+    };
+
+    $(document).on('afterClose.facebox', removeCandidate);
 
     //d3.csv("public/smallest_senate_only.csv", function(error, congress){
       //senate = createContributions('s', parsed);
