@@ -272,12 +272,17 @@ $(document).ready(function(){
       $('.years_container').html('');
       pack(contributionData);
       var cycleTotals = _.map(contributionData.children, function(d){ return d.value;});
+
+      // Change range for house vs. senate
+      var cycleRange = contributionData.branch == 'senate' ? [20,50] : [20,40];
       var cycleSize = d3.scale.linear()
-        .range([20, 50])
+        .range(cycleRange)
         .domain([_.min(cycleTotals), _.max(cycleTotals)]);
 
-
       var sortedYears = _.sortBy(contributionData.children, function(d){ return parseInt(d.name, 10); });
+
+      // Drop House 2014 cycle
+      var sortedYears = _.filter(sortedYears, function(d){ return d.name != '2014'; });
 
       var yearSvg = d3.select(".years_container").selectAll("svg")
           .data(sortedYears)
