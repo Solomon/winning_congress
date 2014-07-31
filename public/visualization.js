@@ -319,6 +319,8 @@ $(document).ready(function(){
     };
 
     var displayYear = function(year){
+      if(typeof activeYear !== 'undefined' && activeYear == year){ return; }
+
       setActiveYear(year);
       $("#candidates").html("");
       cycleCandidates = _.find(contributionData.children, function(d){ return d.name === year; });
@@ -449,8 +451,15 @@ $(document).ready(function(){
       },
 
       year: function(branch, year){
+        $('#candidates').addClass('hidden');
+        $('.spinner').show();
+        var start = new Date().getTime();
         setBranch(branch);
+        var mid = new Date().getTime();
         displayYear(year);
+        var end = new Date().getTime();
+        $('.spinner').hide();
+        $('#candidates').removeClass('hidden');
       },
 
       candidate: function(branch, year, candidate){
@@ -460,23 +469,10 @@ $(document).ready(function(){
         showDetail(cand);
       }
     });
-    $.ajax({
-      url: "/public/smaller_pols.csv.gz.txt"
-      //cache: false
-    })
-    .done(function (b64file) {
-      binary = JXG.decompress(b64file);
-      parsed = d3.csv.parse(binary);
-      senate = createContributions('senate', parsed);
-      house = createContributions('house', parsed);
-      contributionData = senate;
-      createYearlyCircles();
-
-      appRouter = new CongressRouter();
-      Backbone.history.start();
-    });
 
     setBranch = function(branch){
+      if(branch == contributionData.branch){ return;}
+
       if(branch == 'senate'){
         contributionData = senate;
       } else {
@@ -503,15 +499,16 @@ $(document).ready(function(){
 
     $(document).on('afterClose.facebox', removeCandidate);
 
-    //d3.csv("public/smallest_senate_only.csv", function(error, congress){
-      //senate = createContributions('s', parsed);
-      //house = createContributions('h', parsed);
-      //contributionData = house;
-      //createYearlyCircles();
+    //d3.csv("public/smaller_pols.csv", function(error, congress){
+    d3.csv("https://solomon_projects.s3.amazonaws.com/winningcongress/compressed_pols.csv", function(error, congress){
+      senate = createContributions('senate', congress);
+      house = createContributions('house', congress);
+      contributionData = house;
+      createYearlyCircles();
 
-      //appRouter = new CongressRouter();
-      //Backbone.history.start();
-    //});
+      appRouter = new CongressRouter();
+      Backbone.history.start();
+    });
 
   }
 });
