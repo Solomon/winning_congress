@@ -223,66 +223,74 @@ $(document).ready(function(){
     drawCircles = function(d){
       var g = d3.select(this);
 
-      // Centers the candidate circles
-      var centerOffset = function(d){
-        var offset = 100 - d.r;
-        g.attr("transform", "translate(" + offset + "," + offset + ")");
-      };
+      // Set the timeout so candidate list can load without the
+      // browser getting hung up until all the candidate circles
+      // can render
+      setTimeout(function(){
 
-      var node = g.datum(d).selectAll(".node")
-        .data(packPols)
-      .enter().append("g")
-        .attr("class", function(d){
-          if(d.children){
-            return "node";
-          } else {
-            return d.moneySource == "p" ? "pac leaf node" : "individual leaf node";
-          }
-        })
-        .attr("transform", function(d) {
-          if(d.children){
-            centerOffset(d);
-            return "translate(" + d.x + "," + d.y + ")";
-          } else {
-            return "translate(" + d.x + "," + d.y + ")";
-          }
-        });
+        // Centers the candidate circles
+        var centerOffset = function(d){
+          var offset = 100 - d.r;
+          g.attr("transform", "translate(" + offset + "," + offset + ")");
+        };
+
+        var node = g.datum(d).selectAll(".node")
+          .data(packPols)
+        .enter().append("g")
+          .attr("class", function(d){
+            if(d.children){
+              return "node";
+            } else {
+              return d.moneySource == "p" ? "pac leaf node" : "individual leaf node";
+            }
+          })
+          .attr("transform", function(d) {
+            if(d.children){
+              centerOffset(d);
+              return "translate(" + d.x + "," + d.y + ")";
+            } else {
+              return "translate(" + d.x + "," + d.y + ")";
+            }
+          });
 
 
-      node.append("circle")
-        .attr("r", function(d){ return d.r; })
-        .attr("class", function(d){ return d.children ? "parent" : "child"; })
-        .on("mouseover", function(d){
-          if(showTooltips && d.tooltipLevel == "contribution"){
-            tooltip.html(tooltipMessage(d));
-            tooltip.style("visibility", "visible");
-          }
-          return;
-        })
-        .on("mousemove", function(){
-          return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 20) + "px");
-        })
-        .on("mouseout", function(){
-          tooltip.style("visibility", "hidden");
-          return;
-        })
+        node.append("circle")
+          .attr("r", function(d){ return d.r; })
+          .attr("class", function(d){ return d.children ? "parent" : "child"; })
+          .on("mouseover", function(d){
+            if(showTooltips && d.tooltipLevel == "contribution"){
+              tooltip.html(tooltipMessage(d));
+              tooltip.style("visibility", "visible");
+            }
+            return;
+          })
+          .on("mousemove", function(){
+            return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 20) + "px");
+          })
+          .on("mouseout", function(){
+            tooltip.style("visibility", "hidden");
+            return;
+          })
+      },100);
     };
 
     var createYearlyCircles = function(){
       $('.years_container').html('');
       pack(contributionData);
-      var cycleTotals = _.map(contributionData.children, function(d){ return d.value;});
-
-      // Change range for house vs. senate
-      var cycleRange = contributionData.branch == 'senate' ? [20,50] : [20,40];
-      var cycleSize = d3.scale.linear()
-        .range(cycleRange)
-        .domain([_.min(cycleTotals), _.max(cycleTotals)]);
 
       var sortedYears = _.sortBy(contributionData.children, function(d){ return parseInt(d.name, 10); });
 
       // Drop House 2014 cycle
       var sortedYears = _.filter(sortedYears, function(d){ return d.name != '2014'; });
+
+      var cycleTotals = _.map(sortedYears, function(d){ return d.value;});
+
+      // Change range for house vs. senate
+      var cycleRange = contributionData.branch == 'senate' ? [20,50] : [20,50];
+      var cycleSize = d3.scale.linear()
+        .range(cycleRange)
+        .domain([_.min(cycleTotals), _.max(cycleTotals)]);
+
 
       var yearSvg = d3.select(".years_container").selectAll("svg")
           .data(sortedYears)
@@ -323,9 +331,9 @@ $(document).ready(function(){
 
       setActiveYear(year);
       $("#candidates").html("");
-      cycleCandidates = _.find(contributionData.children, function(d){ return d.name === year; });
-      sortedCandidates = _.sortBy(cycleCandidates.children, function(d){ return d.value; }).reverse();
-      candidateContainer = d3.select("#candidates").selectAll(".candidate")
+      var cycleCandidates = _.find(contributionData.children, function(d){ return d.name === year; });
+      var sortedCandidates = _.sortBy(cycleCandidates.children, function(d){ return d.value; }).reverse();
+      var candidateContainer = d3.select("#candidates").selectAll(".candidate")
           .data(sortedCandidates);
 
       candidateContainer.enter().append("div")
@@ -340,20 +348,22 @@ $(document).ready(function(){
         .attr("class", "sub_cand cand_message")
         .html(function(d){ return politicianMessage(d);});
 
-      csvgs = candidateContainer
+      var csvgs = candidateContainer
         .append("div")
           .attr("class", "sub_cand circle_pack")
         .append("svg")
           .attr("width", 200)
           .attr("height", 200);
 
-      cviz = csvgs.append("g");
+      var cviz = csvgs.append("g");
+
+      var domain = contributionData.branch == 'house' ? [300000, 16000000] : [500000, 50000000];
 
       var polTotals = _.map(sortedCandidates, function(d){ return d.value;});
       polSize = d3.scale.pow()
         .exponent(0.5)
         .range([20, 200])
-        .domain([500000,50000000]);
+        .domain(domain);
 
       candPack = d3.layout.pack()
         .sort(function(a, b){ return a.size > b.size ? a : b; })
@@ -451,15 +461,8 @@ $(document).ready(function(){
       },
 
       year: function(branch, year){
-        $('#candidates').addClass('hidden');
-        $('.spinner').show();
-        var start = new Date().getTime();
         setBranch(branch);
-        var mid = new Date().getTime();
         displayYear(year);
-        var end = new Date().getTime();
-        $('.spinner').hide();
-        $('#candidates').removeClass('hidden');
       },
 
       candidate: function(branch, year, candidate){
