@@ -98,6 +98,10 @@ circle {
   border 2px solid black;
 }
 
+#candidate_detailed_view {
+  width: auto;
+}
+
 .cand_message {
   width: 250px;
 }
@@ -106,16 +110,12 @@ circle {
   float: left;
   display: block;
   margin: 0 80px 20px 80px;
-  /*width: 40%*/
-  /*margin-left 50px;*/
-  /*margin-right 5%;*/
 }
 
 .topRow {
   float: left;
   display: block;
   margin: 40px 80px;
-  /*width:40%;*/
 }
 
 .politicianMessage {

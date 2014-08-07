@@ -191,33 +191,37 @@ $(document).ready(function(){
       return message(d);
     };
 
-    // Set up facebox settings
-    $.facebox.settings.closeImage = 'public/closelabel.png';
-    $.facebox.settings.loadingImage = 'public/loading.gif';
-
     var loadAreaLightbox= function(d){
-      jQuery.facebox(
-        '<div id="candidate_detailed_view" style="width: 1100px;">' +
-          '<div class="candAttributes topRow">' +
-            '<h2 class="chart_title">'  + d.name + '</h2>' +
-            '<h4 class="chart_title">' + d.parent.name + ' - ' + d.state + '</h2>' +
-            '<h4 class="chart_title">Total Raised From Individuals: ' + dollarFormat(d.individualTotal()) + '</h2>' +
-            '<h4 class="chart_title">Total Raised From Pacs: ' + dollarFormat(d.pacTotal()) + '</h2>' +
-            '<h4 class="chart_title">Percent From Individuals: ' + percentFormat(1-d.pacPercentage()) + '</h2>' +
-            '<h4 class="chart_title">Percent From Pacs: ' + percentFormat(d.pacPercentage()) + '</h2>' +
-          '</div>' +
-          '<div class="bigIndividualCircle topRow"></div>' +
-          '<div class="clear"></div>' +
-          '<div class="contributionContainer">' +
-            '<h3>Contributions From Individuals</h3>' +
-            '<div class="indContributions"></div>' +
-          '</div>' +
-          '<div class="contributionContainer">' +
-            '<h3>Contributions From Pacs</h3>' +
-            '<div class="pacContributions"></div>' +
-          '</div>' +
-        '</div>'
-      );
+      $.fancybox({
+        'scrolling': 'no',
+        'AutoDimension': true,
+        'margin': [20,0,10,0],
+        'fitToView': false,
+        'maxWidth': "95%",
+        'padding': 0,
+        content:
+          '<div id="candidate_detailed_view"">' +
+            '<div class="candAttributes topRow">' +
+              '<h2 class="chart_title">'  + d.name + '</h2>' +
+              '<h4 class="chart_title">' + d.parent.name + ' - ' + d.state + '</h2>' +
+              '<h4 class="chart_title">Total Raised From Individuals: ' + dollarFormat(d.individualTotal()) + '</h2>' +
+              '<h4 class="chart_title">Total Raised From Pacs: ' + dollarFormat(d.pacTotal()) + '</h2>' +
+              '<h4 class="chart_title">Percent From Individuals: ' + percentFormat(1-d.pacPercentage()) + '</h2>' +
+              '<h4 class="chart_title">Percent From Pacs: ' + percentFormat(d.pacPercentage()) + '</h2>' +
+            '</div>' +
+            '<div class="bigIndividualCircle topRow"></div>' +
+            '<div class="clear"></div>' +
+            '<div class="contributionContainer">' +
+              '<h3>Contributions From Individuals</h3>' +
+              '<div class="indContributions"></div>' +
+            '</div>' +
+            '<div class="contributionContainer">' +
+              '<h3>Contributions From Pacs</h3>' +
+              '<div class="pacContributions"></div>' +
+            '</div>' +
+          '</div>',
+        'afterClose': removeCandidate
+      });
     };
 
     drawCircles = function(d){
@@ -360,7 +364,7 @@ $(document).ready(function(){
       var domain = contributionData.branch == 'house' ? [300000, 16000000] : [500000, 50000000];
 
       var polTotals = _.map(sortedCandidates, function(d){ return d.value;});
-      polSize = d3.scale.pow()
+      var polSize = d3.scale.pow()
         .exponent(0.5)
         .range([20, 200])
         .domain(domain);
@@ -500,7 +504,6 @@ $(document).ready(function(){
       }
     };
 
-    $(document).on('afterClose.facebox', removeCandidate);
 
     //d3.csv("public/smaller_pols.csv", function(error, congress){
     d3.csv("https://solomon_projects.s3.amazonaws.com/winningcongress/compressed_pols.csv", function(error, congress){
