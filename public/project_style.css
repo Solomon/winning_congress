@@ -109,13 +109,21 @@ circle {
 .contributionContainer {
   float: left;
   display: block;
-  margin: 0 80px 20px 80px;
 }
 
 .topRow {
   float: left;
   display: block;
-  margin: 40px 80px;
+}
+
+@media (max-width: 500px) {
+  .contributionContainer { margin: 0px 10px 20px 10px;}
+  .topRow { margin: 40px 10px; }
+}
+
+@media (min-width: 501px) {
+  .contributionContainer { margin: 0px 80px 20px 80px;}
+  .topRow { margin: 40px 80px; }
 }
 
 .politicianMessage {
