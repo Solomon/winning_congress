@@ -492,8 +492,10 @@ $(document).ready(function(){
       var currentUrl = document.URL.split('#')[1];
       if(currentUrl){
         var newUrl = branch == 'house' ? currentUrl.replace('senate','house') : currentUrl.replace('house', 'senate');
+        appRouter.navigate(newUrl, {trigger: true});
+      } else {
+        setBranch(branch);
       }
-      appRouter.navigate(newUrl, {trigger: true});
     };
 
     removeCandidate = function(){
@@ -503,6 +505,12 @@ $(document).ready(function(){
         appRouter.navigate(newParams, {trigger: true});
       }
     };
+
+    // Switch branch when user clicks
+    $('.select_branch li').on("click", function(){
+      var branch = $(this).text().toLowerCase();
+      switchBranch(branch);
+    });
 
 
     //d3.csv("public/smaller_pols.csv", function(error, congress){
