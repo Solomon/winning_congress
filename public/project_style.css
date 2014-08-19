@@ -33,6 +33,7 @@ circle {
   fill: blue;
   fill-opacity: .05;
   stroke: blue;
+  cursor: pointer;
 }
 
 .individual circle {
@@ -153,3 +154,15 @@ circle {
   padding: 4px 30px 0 0;
 }
 
+.select_branch {
+  padding-top: 15px;
+}
+
+.select_branch li {
+  color: white;
+  background: #5ab4ac;
+  margin-right: 15px;
+  padding: 8px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}

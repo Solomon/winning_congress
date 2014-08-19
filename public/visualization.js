@@ -517,7 +517,7 @@ $(document).ready(function(){
     d3.csv("https://solomon_projects.s3.amazonaws.com/winningcongress/compressed_pols.csv", function(error, congress){
       senate = createContributions('senate', congress);
       house = createContributions('house', congress);
-      contributionData = house;
+      contributionData = senate;
       createYearlyCircles();
 
       appRouter = new CongressRouter();
