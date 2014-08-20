@@ -317,15 +317,27 @@ $(document).ready(function(){
           .attr("r", function(d){ return cycleSize(d.value);})
           .attr("class", "year_circle")
           .on("mouseover", function(d){
-            $('.cycle_message').html(cycleMessage(d));
+            //$('.cycle_message').html(cycleMessage(d));
           })
           .on("click", function(d){
+            $('.cycle_message').html(cycleMessage(d));
             appRouter.navigate(contributionData.branch + "/year/" + d.name, {trigger: true});
           });
     };
 
+    // Changes which selector (house or senate) is highlighted as active
+    var setActiveBranch = function(){
+      var dataBranch = contributionData.branch;
+      var selectedBranch = $('.select_branch .active').text();
+      if(dataBranch != selectedBranch){
+        $('.select_branch .active').removeClass('active');
+        $('.select_branch .' + dataBranch).addClass('active');
+      }
+    };
+
     var setActiveYear = function(year){
       activeYear = year;
+      $('.cycle_message').html(cycleMessage(contributionData.cycle(year)));
       $('#years .active').removeClass('active');
       $("#years .year_" + year).addClass('active');
     };
@@ -334,6 +346,7 @@ $(document).ready(function(){
       if(typeof activeYear !== 'undefined' && activeYear == year){ return; }
 
       setActiveYear(year);
+      setActiveBranch();
       $("#candidates").html("");
       var cycleCandidates = _.find(contributionData.children, function(d){ return d.name === year; });
       var sortedCandidates = _.sortBy(cycleCandidates.children, function(d){ return d.value; }).reverse();
@@ -490,6 +503,7 @@ $(document).ready(function(){
 
     switchBranch = function(branch){
       var currentUrl = document.URL.split('#')[1];
+      activeYear = 1;
       if(currentUrl){
         var newUrl = branch == 'house' ? currentUrl.replace('senate','house') : currentUrl.replace('house', 'senate');
         appRouter.navigate(newUrl, {trigger: true});

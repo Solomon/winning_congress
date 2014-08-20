@@ -166,3 +166,7 @@ circle {
   border-radius: 5px;
   cursor: pointer;
 }
+
+.select_branch .active {
+  border: 1px solid blue;
+}
