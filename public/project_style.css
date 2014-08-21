@@ -168,5 +168,6 @@ circle {
 }
 
 .select_branch .active {
+  background: #278179;
   border: 1px solid blue;
 }

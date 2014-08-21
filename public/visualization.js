@@ -527,6 +527,7 @@ $(document).ready(function(){
     });
 
 
+    //d3.csv("public/smallest_senate_only.csv", function(error, congress){
     //d3.csv("public/smaller_pols.csv", function(error, congress){
     d3.csv("https://solomon_projects.s3.amazonaws.com/winningcongress/compressed_pols.csv", function(error, congress){
       senate = createContributions('senate', congress);
