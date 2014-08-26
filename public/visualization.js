@@ -303,17 +303,17 @@ $(document).ready(function(){
             .attr("class", function(d){ return "year year_" + d.name; })
           .append("svg")
             .attr("width", function(d){ return cycleSize(d.value) * 2 + 20; })
-            .attr("height", 100);
+            .attr("height", 104);
 
       yearSvg.append("text")
         .attr("x", function(d){ return cycleSize(d.value) + 10; })
-        .attr("y", 55)
+        .attr("y", 56)
         .style("text-anchor", "middle")
         .text(function(d){ return d.name; });
 
       yearSvg.append("g")
         .append("circle")
-          .attr("transform", function(d){ return "translate(" + (cycleSize(d.value) + 10) +",50)"; })
+          .attr("transform", function(d){ return "translate(" + (cycleSize(d.value) + 10) +",52)"; })
           .attr("r", function(d){ return cycleSize(d.value);})
           .attr("class", "year_circle")
           .on("mouseover", function(d){

@@ -30,9 +30,9 @@ circle {
 }
 
 .year_circle {
-  fill: blue;
-  fill-opacity: .05;
-  stroke: blue;
+  fill: #327CCB;
+  fill-opacity: .15;
+  stroke: #327CCB;
   cursor: pointer;
 }
 
@@ -67,6 +67,7 @@ circle {
 
 #years {
   margin: 25px 0;
+  height: 105px;
 }
 
 .year {
@@ -167,11 +168,15 @@ circle {
   cursor: pointer;
 }
 
+.select_branch li:hover {
+  background: #278179;
+}
+
 .select_branch .active {
   background: #278179;
   border: 1px solid blue;
 }
 
 .credits img {
-  margin-right: 40px;
+ margin-right: 40px;
 }
