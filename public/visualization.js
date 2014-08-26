@@ -395,6 +395,9 @@ $(document).ready(function(){
       };
 
       cviz.each(drawCircles);
+
+      $('.credits').removeClass('hidden');
+      //$('.mailing_list').removeClass('hidden');
     };
 
 

@@ -171,3 +171,7 @@ circle {
   background: #278179;
   border: 1px solid blue;
 }
+
+.credits img {
+  margin-right: 40px;
+}
