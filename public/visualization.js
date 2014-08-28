@@ -209,7 +209,9 @@ $(document).ready(function(){
               '<h4 class="chart_title">Percent From Individuals: ' + percentFormat(1-d.pacPercentage()) + '</h2>' +
               '<h4 class="chart_title">Percent From Pacs: ' + percentFormat(d.pacPercentage()) + '</h2>' +
             '</div>' +
-            '<div class="bigIndividualCircle topRow"></div>' +
+            '<div class="bigIndividualCircle topRow">' +
+              '<div class="candLegend"></div>' +
+            '</div>' +
             '<div class="clear"></div>' +
             '<div class="contributionContainer">' +
               '<h3>Contributions From Individuals</h3>' +
@@ -397,6 +399,8 @@ $(document).ready(function(){
       cviz.each(drawCircles);
 
       $('.credits').removeClass('hidden');
+
+      createLegend('.legend');
       //$('.mailing_list').removeClass('hidden');
     };
 
@@ -412,6 +416,43 @@ $(document).ready(function(){
       t += "<tr><td><strong>Total</strong></td><td><strong>" + dollarFormat(total) + "</strong></td></tr>";
       t += "</table>";
       return t;
+    };
+
+
+    createLegend = function(selector){
+      if($(selector).html().length){ return;}
+
+      var info = [
+        {'name': 'Pac Contribution', 'color': '#8c510a'},
+        {'name': 'Individual Contribution', 'color': '#5ab4ac'}
+      ];
+
+      var legendScale = d3.scale.ordinal()
+        .domain(['Individual Contribution', 'Pac Contribution'])
+        .range([0,250]);
+
+      var legendContainer = d3.select(selector)
+        .append("svg")
+          .attr("width", 550)
+          .attr("height", 30);
+
+      var legendGroup = legendContainer.selectAll('legendGroup')
+        .data(info)
+        .enter()
+
+      legendGroup.append("g")
+        .append("rect")
+          .attr("width", 50)
+          .attr("height", 20)
+          .attr("transform", function(d){ return "translate(" + legendScale(d.name) + ", 10)";  })
+          .style("fill", function(d){ return d.color; });
+
+      legendGroup.append("text")
+        .text(function(d){ return d.name; })
+        .attr("transform", function(d){ return "translate(" + (legendScale(d.name) + 60) + ", 0)";  })
+        .attr('height',50)
+        .attr('y', 25)
+        .style('fill', 'black');
     };
 
     var loadDetailCircle = function(d){
@@ -467,6 +508,7 @@ $(document).ready(function(){
       loadAreaLightbox(d);
       $('.indContributions').html(contributionTable(d.individualContributions()));
       $('.pacContributions').html(contributionTable(d.pacContributions()));
+      createLegend('.candLegend');
       loadDetailCircle(d);
     };
 
