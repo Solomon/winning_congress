@@ -419,17 +419,17 @@ $(document).ready(function(){
     };
 
 
-    createLegend = function(selector){
+    var createLegend = function(selector){
       if($(selector).html().length){ return;}
 
       var info = [
-        {'name': 'Pac Contribution', 'color': '#8c510a'},
-        {'name': 'Individual Contribution', 'color': '#5ab4ac'}
+        {'name': 'Pacs', 'color': '#8c510a'},
+        {'name': 'Individuals', 'color': '#5ab4ac'}
       ];
 
       var legendScale = d3.scale.ordinal()
-        .domain(['Individual Contribution', 'Pac Contribution'])
-        .range([0,250]);
+        .domain(['Individuals', 'Pacs'])
+        .range([0,180]);
 
       var legendContainer = d3.select(selector)
         .append("svg")
