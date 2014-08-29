@@ -76,7 +76,7 @@ circle {
 }
 
 #candidates {
-  margin: 25px 0 0 0;
+  margin: 10px 0 0 0;
 }
 
 .candidate {
@@ -182,5 +182,9 @@ circle {
 }
 
 .legend {
+  margin-top: 25px;
+}
+
+.candLegend {
   margin-top: 15px;
 }

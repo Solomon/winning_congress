@@ -427,6 +427,10 @@ $(document).ready(function(){
         {'name': 'Individuals', 'color': '#5ab4ac'}
       ];
 
+      var svgHeight = d3.scale.ordinal()
+        .domain(['.legend', '.candLegend'])
+        .range([30,45]);
+
       var legendScale = d3.scale.ordinal()
         .domain(['Individuals', 'Pacs'])
         .range([0,180]);
@@ -434,7 +438,7 @@ $(document).ready(function(){
       var legendContainer = d3.select(selector)
         .append("svg")
           .attr("width", 550)
-          .attr("height", 30);
+          .attr("height", function(){ return svgHeight(selector); });
 
       var legendGroup = legendContainer.selectAll('legendGroup')
         .data(info)
@@ -479,9 +483,9 @@ $(document).ready(function(){
         })
         .attr("transform", function(d) {
           if(d.children){
-            return "translate(" + d.x + "," + d.y + ")";
+            return "translate(" + (d.x + 10) + "," + (d.y + 10) + ")";
           } else {
-            return "translate(" + d.x + "," + d.y + ")";
+            return "translate(" + (d.x + 10) + "," + (d.y + 10) + ")";
           }
         });
 
