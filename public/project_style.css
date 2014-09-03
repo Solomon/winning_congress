@@ -156,15 +156,17 @@ circle {
 }
 
 .select_branch {
+  float: left;
   padding-top: 15px;
+  margin-top: 25px;
 }
 
 .select_branch li {
   color: white;
   background: #5ab4ac;
   margin-right: 15px;
-  padding: 8px 8px;
-  border-radius: 5px;
+  padding: 6px 6px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
@@ -182,9 +184,22 @@ circle {
 }
 
 .legend {
+  float: right;
   margin-top: 25px;
 }
 
 .candLegend {
   margin-top: 15px;
+}
+
+.explanation {
+  margin-top: 10px;
+}
+
+.explanation p {
+  line-height: 24px;
+}
+
+.cycle_message {
+  margin-bottom: 15px;
 }

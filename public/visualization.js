@@ -437,7 +437,7 @@ $(document).ready(function(){
 
       var legendContainer = d3.select(selector)
         .append("svg")
-          .attr("width", 550)
+          .attr("width", 350)
           .attr("height", function(){ return svgHeight(selector); });
 
       var legendGroup = legendContainer.selectAll('legendGroup')
@@ -569,6 +569,11 @@ $(document).ready(function(){
       }
     };
 
+    var initializeApplication = function(){
+      contributionData = senate;
+      createYearlyCircles();
+    };
+
     // Switch branch when user clicks
     $('.select_branch li').on("click", function(){
       var branch = $(this).text().toLowerCase();
@@ -581,8 +586,7 @@ $(document).ready(function(){
     d3.csv("https://solomon_projects.s3.amazonaws.com/winningcongress/compressed_pols.csv", function(error, congress){
       senate = createContributions('senate', congress);
       house = createContributions('house', congress);
-      contributionData = senate;
-      createYearlyCircles();
+      initializeApplication();
 
       appRouter = new CongressRouter();
       Backbone.history.start();
