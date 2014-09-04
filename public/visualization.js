@@ -572,6 +572,8 @@ $(document).ready(function(){
     var initializeApplication = function(){
       contributionData = senate;
       createYearlyCircles();
+      $('.select_branch').removeClass('hidden');
+      $('.loading').addClass('hidden');
     };
 
     // Switch branch when user clicks

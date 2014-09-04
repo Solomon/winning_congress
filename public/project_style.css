@@ -186,6 +186,7 @@ circle {
 .legend {
   float: right;
   margin-top: 25px;
+  padding-top: 6px;
 }
 
 .candLegend {
@@ -193,7 +194,11 @@ circle {
 }
 
 .explanation {
-  margin-top: 10px;
+  margin-top: 15px;
+}
+
+.loading {
+  margin-top: 50px;
 }
 
 .explanation p {
