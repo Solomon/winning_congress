@@ -592,6 +592,7 @@ $(document).ready(function(){
 
       appRouter = new CongressRouter();
       Backbone.history.start();
+      appRouter.navigate("senate/year/2012", {trigger: true});
     });
 
   }
