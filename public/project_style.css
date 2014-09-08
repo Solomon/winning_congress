@@ -97,7 +97,12 @@ circle {
   background: white;
   padding: 20px;
   border-radius: 5px;
-  border 2px solid black;
+  border: 1px solid #463E3F;
+  line-height: 24px;
+}
+
+.vizTooltip h3 {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 #candidate_detailed_view {
@@ -129,14 +134,19 @@ circle {
 }
 
 .politicianMessage {
-  margin-top: 43px;
+  margin-top: 40px;
 }
 
 .politicianMessage .name {
   font-size: 24px;
 }
 
+.politicianMessage .details {
+  line-height: 24px;
+}
+
 .politicianMessage .party_state {
+  margin: 5px 0;
   font-weight: bold;
 }
 
